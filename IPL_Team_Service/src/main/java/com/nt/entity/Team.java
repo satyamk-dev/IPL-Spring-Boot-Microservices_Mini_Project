@@ -5,53 +5,41 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Setter
-@Getter
+@Data
+@Table(name = "IPL_TEAM")
 @AllArgsConstructor
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class Player {
+public class Team {
 
 	@Id
-	@SequenceGenerator(name = "gen1", sequenceName = "P_IPL", initialValue = 1, allocationSize = 1)
-	@GeneratedValue(generator = "gen1", strategy = GenerationType.SEQUENCE)
-	private Integer playerId;
-
-	@Column(length=30)
-	@NonNull
-	private String playerName;
-
-	private Integer age;
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	private Integer teamId;
 
 	@NonNull
-	@Column(length=30)
-	private String roll;
+	@Column(length = 30)
+	private String teamName;
 
 	@NonNull
-	@ManyToOne(targetEntity = Team.class, cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-	@JoinColumn(name="t_Id", referencedColumnName="teamId")
-	private Team team;
+	@Column(length = 30)
+	private String teamOwner;
 
-	// meta data
+	// meta date
+
 	@Version
 	private Integer updateCount;
 
@@ -67,6 +55,6 @@ public class Player {
 	private String createBy;
 
 	@Column(length = 30, insertable = false)
-	private String updateBy;
+	private String updatedBy;
 
 }
