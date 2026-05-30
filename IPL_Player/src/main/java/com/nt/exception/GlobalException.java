@@ -27,8 +27,8 @@ public class GlobalException {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ResponseMessage> ExceptionController(Exception e) {
 		ResponseMessage res = ResponseMessage.builder().message(e.getMessage()).status(Constants.FAILED)
-				.statusCode(Constants.ERROR).build();
-		return new ResponseEntity(res, HttpStatus.BAD_REQUEST);
+				.statusCode(HttpStatus.BAD_GATEWAY).build();
+		return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 	}
 
 }

@@ -2,6 +2,8 @@ package com.nt.utility;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatusCode;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,7 +15,7 @@ public final class ResponseMessage {
 	
 	private String status;
 	
-	private String statusCode;
+	private HttpStatusCode statusCode;
 	
 	private Object object;
 	
