@@ -9,7 +9,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 public class IplTeamServiceApplication {
 
 	public static void main(String[] args) {
+		System.out.println();	
 		SpringApplication.run(IplTeamServiceApplication.class, args);
 	}
+	
 
 }
