@@ -6,11 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.nt.dto.TeamDto;
+import com.nt.utility.ResponseMessage;
 
 @FeignClient("IPL_Team_Service")
 public interface IfeignServcie {
 	
-	@GetMapping("/ipl-team/getTeamById/{id}")
-	public ResponseEntity<TeamDto> getTeamByIdController(@PathVariable Integer id);
+	@GetMapping("/team/getbyid/{id}")
+	public ResponseEntity<ResponseMessage> getTeamByIdController(@PathVariable Integer id);
 
 }

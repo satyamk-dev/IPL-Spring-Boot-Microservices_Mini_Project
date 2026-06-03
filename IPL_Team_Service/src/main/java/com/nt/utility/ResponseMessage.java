@@ -2,6 +2,10 @@ package com.nt.utility;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+
+import com.nt.dto.TeamDto;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,11 +17,11 @@ public final class ResponseMessage {
 	
 	private String status;
 	
-	private String statusCode;
+	private HttpStatus statusCode;
 	
 	private Object object;
 	
-	private List<Object> list;
+	private List<TeamDto> list;
 	
 
 }
