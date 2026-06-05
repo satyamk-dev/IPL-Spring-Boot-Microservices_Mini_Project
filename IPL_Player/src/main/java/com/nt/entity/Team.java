@@ -37,22 +37,19 @@ public class Team {
 	private String teamOwner;
 
 	// meta data
-
-	@Version
-	private Integer updateCount;
+//	@Version
+//	private Integer updateCount;
 
 	@CreationTimestamp
 	@Column(updatable = false)
-	private LocalDateTime createdOn;
+	private LocalDateTime createOn;
 
 	@UpdateTimestamp
-	@Column(insertable = false)
 	private LocalDateTime lastUpdateOn;
 
 	@Column(length = 30, updatable = false)
 	private String createBy;
 
-	@Column(length = 30, insertable = false)
-	private String updateBy;
-
+	@Column(length = 30)
+	private String updatedBy;
 }

@@ -30,14 +30,15 @@ public class TeamController {
 
 	@GetMapping("/test")
 	public String testing() {
-		return new String("GetMapping calling : Application Running");
+		return new String(" Team Service ✔: Application Running");
 	}
 
 	@PostMapping("/saveteam")
 	public ResponseEntity<ResponseMessage> saveTeamController(@RequestBody TeamDto teamDto) {
 		String saveTeam = service.saveTeam(teamDto);
 		ResponseMessage response = ResponseMessage.builder().message(saveTeam).status(Constants.SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).build();
+				.statusCode(Constants.STATUS_OK).build();
+		System.out.println(response);
 		return ResponseEntity.ok(response);
 	}
 
@@ -45,15 +46,15 @@ public class TeamController {
 	public ResponseEntity<ResponseMessage> getAllTeamContorller() {
 		List<TeamDto> allTeamService = service.getAllTeamService();
 		ResponseMessage response = ResponseMessage.builder().message("List of All Team's").status(Constants.SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).list(allTeamService).build();
+				.statusCode(Constants.STATUS_OK).list(allTeamService).build();
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
 
 	@GetMapping("/getbyid/{id}")
-	public ResponseEntity<ResponseMessage> getTeamByIdController(@PathVariable Integer id) {
+	public ResponseEntity<ResponseMessage> getTeamByIdController(@PathVariable int id) {
 		TeamDto teamById = service.getTeamById(id);
 		ResponseMessage response = ResponseMessage.builder().message("Get Team By Id Service").status(Constants.SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).object(teamById).build();
+				.statusCode(Constants.STATUS_OK).object(teamById).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -62,7 +63,7 @@ public class TeamController {
 
 		String updateTeam = service.updateTeam(teamDto);
 		ResponseMessage response = ResponseMessage.builder().message(updateTeam).status(Constants.SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).object(teamDto).build();
+				.statusCode(Constants.STATUS_CREATED).object(teamDto).build();
 		return new ResponseEntity<ResponseMessage>(response, HttpStatus.ACCEPTED);
 
 	}
@@ -74,7 +75,7 @@ public class TeamController {
 		String updateTeamName = service.updateTeamName(id, name);
 
 		ResponseMessage response = ResponseMessage.builder().message(updateTeamName).status(Constants.SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).build();
+				.statusCode(Constants.STATUS_CREATED).build();
 
 		return new ResponseEntity<ResponseMessage>(response, HttpStatus.ACCEPTED);
 
@@ -85,7 +86,7 @@ public class TeamController {
 
 		String deleteTeam = service.deleteTeam(id);
 		ResponseMessage response = ResponseMessage.builder().message(deleteTeam).status(Constants.SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).build();
+				.statusCode(Constants.STATUS_OK).build();
 
 		return new ResponseEntity<ResponseMessage>(response, HttpStatus.ACCEPTED);
 
@@ -96,7 +97,7 @@ public class TeamController {
 		String deleteAllTeam = service.deleteAllTeam();
 
 		ResponseMessage response = ResponseMessage.builder().message(deleteAllTeam).status(Constants.SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).build();
+				.statusCode(Constants.STATUS_OK).build();
 
 		return ResponseEntity.ok(response);
 

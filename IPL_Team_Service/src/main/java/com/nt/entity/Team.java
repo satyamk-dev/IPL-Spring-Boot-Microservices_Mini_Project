@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,21 +41,21 @@ public class Team {
 
 	// meta date
 
-	@Version
-	private Integer updateCount;
+//	@Version
+//	private Integer updateCount;
 
 	@CreationTimestamp
 	@Column(updatable = false)
 	private LocalDateTime createOn;
 
 	@UpdateTimestamp
-	@Column(insertable = false)
 	private LocalDateTime lastUpdateOn;
 
+	@CreatedBy
 	@Column(length = 30, updatable = false)
 	private String createBy;
 
-	@Column(length = 30, insertable = false)
+	@Column(length = 30)
 	private String updatedBy;
 
 }

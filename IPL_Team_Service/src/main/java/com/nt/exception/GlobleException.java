@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.nt.utility.Constants;
 import com.nt.utility.ResponseMessage;
 
 @RestControllerAdvice
@@ -12,8 +13,8 @@ public class GlobleException {
 
 	@ExceptionHandler(TeamNotFoundException.class)
 	public ResponseEntity<ResponseMessage> TeamNotFoundExcpetion(TeamNotFoundException ex) {
-
-		ResponseMessage rm = ResponseMessage.builder().message(ex.getMessage()).statusCode(HttpStatus.BAD_REQUEST).build();
+		ex.printStackTrace();;
+		ResponseMessage rm = ResponseMessage.builder().message(ex.getMessage()).status(Constants.FAILED).statusCode(Constants.STATUS_NOT_FOUND).build();
 
 		return new ResponseEntity<ResponseMessage>(rm, HttpStatus.BAD_REQUEST);
 
@@ -21,6 +22,7 @@ public class GlobleException {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> globleException(Exception e) {
+		e.printStackTrace();
 		return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 }

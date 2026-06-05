@@ -31,14 +31,14 @@ public class PlayerController {
 
 	@GetMapping("/test")
 	public String testing() {
-		return new String("GetMapping calling : Application Running");
+		return new String("Player Service  : Application Running ✔");
 	}
 
 	@GetMapping("/getallplayer")
 	public ResponseEntity<ResponseMessage> getAllPlayerController() {
 		List<PlayerDto> allPlayer = service.getAllPlayer();
-		ResponseMessage response = ResponseMessage.builder().message("All Player List").status(Constants.SUCCESS)
-				.statusCode(HttpStatus.OK).list(allPlayer).build();
+		ResponseMessage response = ResponseMessage.builder().message("All Player List ✔").status(Constants.SUCCESS)
+				.statusCode(Constants.STATUS_OK).list(allPlayer).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -48,17 +48,17 @@ public class PlayerController {
 		String registerPlayer = service.registerPlayer(dto);
 
 		ResponseMessage response = ResponseMessage.builder().message(registerPlayer).status(Constants.SAVE_SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).object(dto).build();
+				.statusCode(Constants.STATUS_OK).object(dto).build();
 
 		return ResponseEntity.ok(response);
 
 	}
 
 	@GetMapping("/getplayerbyid/{id}")
-	public ResponseEntity<ResponseMessage> getPlayerByIdController(@PathVariable("id") int id) {
+	public ResponseEntity<ResponseMessage> getPlayerByIdController(@PathVariable int id) {
 		PlayerDto player = service.getPlayer(id);
 		ResponseMessage response = ResponseMessage.builder().message("Player got By Id").status(Constants.SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).object(player).build();
+				.statusCode(Constants.STATUS_OK).object(player).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -66,7 +66,7 @@ public class PlayerController {
 	public ResponseEntity<ResponseMessage> updatePlayerController(@RequestBody PlayerDto dto) {
 		String updatePlayer = service.updatePlayer(dto);
 		ResponseMessage response = ResponseMessage.builder().message(updatePlayer).status(Constants.UPDATE_SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).build();
+				.statusCode(Constants.STATUS_CREATED).build();
 		return ResponseEntity.ok(response);
 
 	}
@@ -77,7 +77,7 @@ public class PlayerController {
 		String updateName = service.updateName(name, id);
 
 		ResponseMessage response = ResponseMessage.builder().message(updateName).status(Constants.UPDATE_SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).build();
+				.statusCode(Constants.STATUS_CREATED).build();
 
 		return ResponseEntity.ok(response);
 
@@ -89,7 +89,7 @@ public class PlayerController {
 		String updateRoll = service.updateRoll(roll, id);
 
 		ResponseMessage response = ResponseMessage.builder().message(updateRoll).status(Constants.UPDATE_SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).build();
+				.statusCode(Constants.STATUS_CREATED).build();
 
 		return ResponseEntity.ok(response);
 
@@ -100,7 +100,7 @@ public class PlayerController {
 		String deletePlayer = service.deletePlayer(id);
 
 		ResponseMessage response = ResponseMessage.builder().message(deletePlayer).status(Constants.DELETE_SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).build();
+				.statusCode(Constants.STATUS_OK).build();
 
 		return ResponseEntity.ok(response);
 	}
@@ -111,7 +111,7 @@ public class PlayerController {
 		List<String> allPlayerName = service.getAllPlayerName();
 
 		ResponseMessage response = ResponseMessage.builder().message("All Player Name List").status(Constants.SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).build();
+				.statusCode(Constants.STATUS_OK).build();
 
 		return ResponseEntity.ok(response);
 	}
@@ -122,7 +122,7 @@ public class PlayerController {
 		Map<Integer, String> allIdAndPlayer = service.getAllIdAndPlayer();
 
 		ResponseMessage response = ResponseMessage.builder().message("All Id And  Name List").status(Constants.SUCCESS)
-				.statusCode(HttpStatus.ACCEPTED).build();
+				.statusCode(Constants.STATUS_OK).build();
 
 		return ResponseEntity.ok(response);
 

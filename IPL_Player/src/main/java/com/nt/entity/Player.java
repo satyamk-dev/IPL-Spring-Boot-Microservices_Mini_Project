@@ -60,13 +60,12 @@ public class Player {
 	private LocalDateTime createOn;
 
 	@UpdateTimestamp
-	@Column(insertable = false)
 	private LocalDateTime lastUpdateOn;
 
 	@Column(length = 30, updatable = false)
 	private String createBy;
 
-	@Column(length = 30, insertable = false)
-	private String updateBy;
+	@Column(length = 30)
+	private String updatedBy;
 
 }

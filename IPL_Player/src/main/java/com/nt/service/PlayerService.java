@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeanUtils;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nt.dto.PlayerDto;
 import com.nt.entity.Player;
 import com.nt.entity.Team;
@@ -32,6 +32,9 @@ public class PlayerService implements IPlayerService {
 	@Autowired
 	private IfeignServcie feignService;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	public PlayerService(PlayerRepository playerRepository) {
 		this.playerRepository = playerRepository;
 	}
@@ -45,20 +48,7 @@ public class PlayerService implements IPlayerService {
 	public String registerPlayer(PlayerDto playerDto) {
 
 		Player player = new Player();
-
-		player.setPlayerName(playerDto.getPlayerName());
-		player.setAge(playerDto.getAge());
-		player.setRoll(playerDto.getRoll());
-
-		ResponseEntity<ResponseMessage> response = feignService.getTeamByIdController(playerDto.getTeam().getTeamId());
-
-		@Nullable
-		ResponseMessage body = response.getBody();
-
-		Team team = (Team) body.getObject();
-
-		player.setTeam(team);
-
+		BeanUtils.copyProperties(playerDto, player);
 		Player save = playerRepository.save(player);
 
 		return "Player Registered Successfully! " + save.toString();
@@ -66,15 +56,25 @@ public class PlayerService implements IPlayerService {
 
 	@Override
 	public PlayerDto getPlayer(Integer id) {
-		Optional<Player> byId = playerRepository.findById(id);
 
-		PlayerDto playerDto = null;
+		Player player = playerRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid Player Id"));
 
-		if (byId.isPresent()) {
-			playerDto = new PlayerDto();
-			Player player = byId.get();
-			BeanUtils.copyProperties(player, playerDto);
-		}
+		ResponseEntity<ResponseMessage> teambyId = feignService.getTeamByIdController(player.getTeam().getTeamId());
+
+		@Nullable
+		ResponseMessage body = teambyId.getBody();
+
+		Team team = objectMapper.convertValue(body.getObject(), Team.class);
+
+		PlayerDto playerDto = new PlayerDto();
+
+		playerDto.setPlayerId(player.getPlayerId());
+		playerDto.setPlayerName(player.getPlayerName());
+		playerDto.setAge(player.getAge());
+		playerDto.setRoll(player.getRoll());
+		playerDto.setTeam(team);
+
 		return playerDto;
 	}
 

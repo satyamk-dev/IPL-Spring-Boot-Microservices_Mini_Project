@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.nt.dto.TeamDto;
 import com.nt.utility.ResponseMessage;
 
-@FeignClient("IPL_Team_Service")
+@FeignClient("IPL-TEAM")
 public interface IfeignServcie {
 	
 	@GetMapping("/team/getbyid/{id}")
