@@ -20,9 +20,9 @@ public interface IPlayerService {
 
 	public String updateRoll(String roll, Integer playerId);
 
-	public List<String> getAllPlayerName(List<Integer> list);
+	public List<String> getAllPlayerName();
 
-	public Map<Integer, String> getAllIdAndPlayer(List<Integer> list);
+	public Map<Integer, String> getAllIdAndPlayer();
 
 	public List<PlayerDto> getAllPlayer();
 

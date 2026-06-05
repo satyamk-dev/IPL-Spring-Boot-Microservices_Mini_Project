@@ -1,6 +1,7 @@
 package com.nt.utility;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatusCode;
 
@@ -19,7 +20,9 @@ public final class ResponseMessage {
 	
 	private Object object;
 	
-	private List list;
+	private List<?> list;
+	
+	private Map<?,?> map;
 	
 	
 

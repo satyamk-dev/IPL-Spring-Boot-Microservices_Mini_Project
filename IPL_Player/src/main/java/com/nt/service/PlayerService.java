@@ -7,17 +7,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.nt.dto.PlayerDto;
-import com.nt.dto.TeamDto;
 import com.nt.entity.Player;
+import com.nt.entity.Team;
 import com.nt.ifeign.IfeignServcie;
 import com.nt.iservice.IPlayerService;
 import com.nt.repository.PlayerRepository;
 import com.nt.repository.TeamRepository;
+import com.nt.utility.ResponseMessage;
 
 @Service
 public class PlayerService implements IPlayerService {
@@ -46,7 +49,15 @@ public class PlayerService implements IPlayerService {
 		player.setPlayerName(playerDto.getPlayerName());
 		player.setAge(playerDto.getAge());
 		player.setRoll(playerDto.getRoll());
-		player.setTeam(playerDto.getTeam());
+
+		ResponseEntity<ResponseMessage> response = feignService.getTeamByIdController(playerDto.getTeam().getTeamId());
+
+		@Nullable
+		ResponseMessage body = response.getBody();
+
+		Team team = (Team) body.getObject();
+
+		player.setTeam(team);
 
 		Player save = playerRepository.save(player);
 
@@ -110,26 +121,34 @@ public class PlayerService implements IPlayerService {
 	}
 
 	@Override
-	public List<String> getAllPlayerName(List<Integer> playerIds) {
+	public List<String> getAllPlayerName() {
 		List<String> nameList = new ArrayList<>();
-		Iterator<Integer> ilist = playerIds.listIterator();
+		List<Player> all = playerRepository.findAll();
+		Iterator<Player> ilist = all.listIterator();
 		while (ilist.hasNext()) {
-			Integer next = ilist.next();
-			Player player = playerRepository.findById(next)
-					.orElseThrow(() -> new IllegalArgumentException("Invalid Id"));
-			nameList.add(player.getPlayerName());
+			PlayerDto dto = new PlayerDto();
+			Player next = ilist.next();
+			BeanUtils.copyProperties(next, dto);
+			nameList.add(dto.getPlayerName());
 		}
 		return nameList;
 	}
 
 	@Override
-	public Map<Integer, String> getAllIdAndPlayer(List<Integer> list) {
+	public Map<Integer, String> getAllIdAndPlayer() {
 		Map<Integer, String> map = new HashMap<>();
-		for (Integer i : list) {
-			Player player = playerRepository.findById(i)
-					.orElseThrow(() -> new IllegalArgumentException("Invalid Input"));
-			map.put(player.getPlayerId(), player.getPlayerName());
+
+		List<Player> all = playerRepository.findAll();
+
+		Iterator<Player> iterator = all.iterator();
+
+		while (iterator.hasNext()) {
+			PlayerDto dto = new PlayerDto();
+			Player next = iterator.next();
+			BeanUtils.copyProperties(next, dto);
+			map.put(dto.getPlayerId(), dto.getPlayerName());
 		}
+
 		return map;
 	}
 
