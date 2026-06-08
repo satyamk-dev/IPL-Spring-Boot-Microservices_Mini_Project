@@ -14,48 +14,47 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nt.dto.PlayerDto;
+import com.nt.dto.PlayerReciveDto;
+import com.nt.dto.TeamDto;
 import com.nt.entity.Player;
 import com.nt.entity.Team;
+import com.nt.exception.PlayerAlradyExistsException;
 import com.nt.ifeign.IfeignServcie;
 import com.nt.iservice.IPlayerService;
 import com.nt.repository.PlayerRepository;
 import com.nt.repository.TeamRepository;
 import com.nt.utility.ResponseMessage;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class PlayerService implements IPlayerService {
 
-	private PlayerRepository playerRepository;
+	private final PlayerRepository playerRepository;
 
-	private TeamRepository teamRepository;
+	private final TeamRepository teamRepository;
 
-	@Autowired
-	private IfeignServcie feignService;
+	private final IfeignServcie feignService;
 
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	public PlayerService(PlayerRepository playerRepository) {
-		this.playerRepository = playerRepository;
-	}
-
-	@Autowired
-	public void setTeamRepository(TeamRepository teamRepository) {
-		this.teamRepository = teamRepository;
-	}
+	private final ObjectMapper objectMapper;
 
 	@Override
 	public String registerPlayer(PlayerDto playerDto) {
+
+		if (playerRepository.existsByPlayerName(playerDto.getPlayerName())) {
+			throw new PlayerAlradyExistsException("Player Alrady Exists ");
+		}
 
 		Player player = new Player();
 		BeanUtils.copyProperties(playerDto, player);
 		Player save = playerRepository.save(player);
 
-		return "Player Registered Successfully! " + save.toString();
+		return "Player Registered Successfully! [" + save.getPlayerName() + "]";
 	}
 
 	@Override
-	public PlayerDto getPlayer(Integer id) {
+	public PlayerReciveDto getPlayer(Integer id) {
 
 		Player player = playerRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Invalid Player Id"));
@@ -67,13 +66,17 @@ public class PlayerService implements IPlayerService {
 
 		Team team = objectMapper.convertValue(body.getObject(), Team.class);
 
-		PlayerDto playerDto = new PlayerDto();
+		TeamDto teamDto = new TeamDto();
+
+		BeanUtils.copyProperties(team, teamDto);
+
+		PlayerReciveDto playerDto = new PlayerReciveDto();
 
 		playerDto.setPlayerId(player.getPlayerId());
 		playerDto.setPlayerName(player.getPlayerName());
 		playerDto.setAge(player.getAge());
 		playerDto.setRoll(player.getRoll());
-		playerDto.setTeam(team);
+		playerDto.setTeamDto(teamDto);
 
 		return playerDto;
 	}
@@ -93,15 +96,25 @@ public class PlayerService implements IPlayerService {
 
 		Player player = playerRepository.findById(playerDto.getPlayerId())
 				.orElseThrow(() -> new IllegalArgumentException("Invalid Input"));
+
+		if (!player.getPlayerName().equalsIgnoreCase(playerDto.getPlayerName())
+				&& playerRepository.existsByPlayerName(playerDto.getPlayerName())) {
+			throw new PlayerAlradyExistsException("Player is not exists in DataBase");
+		}
+
 		BeanUtils.copyProperties(playerDto, player);
+
 		Player save = playerRepository.save(player);
+
 		return "Player Updated!  Player Name: " + save.getPlayerName();
 	}
 
 	@Override
 	public String updateName(String name, Integer playerId) {
+
 		Player player = playerRepository.findById(playerId)
 				.orElseThrow(() -> new IllegalArgumentException("Invalid Input"));
+
 		String oldName = player.getPlayerName();
 		player.setPlayerName(name);
 		return "Player Old Name: " + oldName + " Player New Name: " + playerRepository.save(player).getPlayerName();
@@ -117,19 +130,24 @@ public class PlayerService implements IPlayerService {
 
 		player.setRoll(roll);
 
-		return "Player old Roll: " + oldRoll + " Player New Roll: " + playerRepository.save(player);
+		return "Player old Roll: " + oldRoll + " Player New Roll: " + playerRepository.save(player).getPlayerName();
 	}
 
 	@Override
 	public List<String> getAllPlayerName() {
+		
 		List<String> nameList = new ArrayList<>();
+		
 		List<Player> all = playerRepository.findAll();
+		
 		Iterator<Player> ilist = all.listIterator();
+		
+		
 		while (ilist.hasNext()) {
-			PlayerDto dto = new PlayerDto();
-			Player next = ilist.next();
-			BeanUtils.copyProperties(next, dto);
-			nameList.add(dto.getPlayerName());
+			
+		Player next = ilist.next();
+			
+			nameList.add(next.getPlayerName());
 		}
 		return nameList;
 	}
@@ -143,22 +161,34 @@ public class PlayerService implements IPlayerService {
 		Iterator<Player> iterator = all.iterator();
 
 		while (iterator.hasNext()) {
-			PlayerDto dto = new PlayerDto();
+			
 			Player next = iterator.next();
-			BeanUtils.copyProperties(next, dto);
-			map.put(dto.getPlayerId(), dto.getPlayerName());
+			
+			map.put(next.getPlayerId(), next.getPlayerName());
 		}
-
 		return map;
 	}
 
 	@Override
-	public List<PlayerDto> getAllPlayer() {
-		List<PlayerDto> playerDto = new ArrayList<>();
+	public List<PlayerReciveDto> getAllPlayer() {
+		List<PlayerReciveDto> playerDto = new ArrayList<>();
 		List<Player> all = playerRepository.findAll();
 		for (Player player : all) {
-			PlayerDto playerO = new PlayerDto();
+			System.out.println(player.getTeam().getTeamId());
+			ResponseEntity<ResponseMessage> teamByFeign = feignService
+					.getTeamByIdController(player.getTeam().getTeamId());
+
+			Team team = objectMapper.convertValue(teamByFeign.getBody().getObject(), Team.class);
+			TeamDto teamDto = new TeamDto();
+			System.out.println(team);
+
+			BeanUtils.copyProperties(team, teamDto);
+
+			System.out.println(teamDto);
+
+			PlayerReciveDto playerO = new PlayerReciveDto();
 			BeanUtils.copyProperties(player, playerO);
+			playerO.setTeamDto(teamDto);
 			playerDto.add(playerO);
 		}
 		return playerDto;

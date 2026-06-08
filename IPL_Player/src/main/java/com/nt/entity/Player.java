@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.nt.dto.TeamDto;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,7 +52,7 @@ public class Player {
 	@ManyToOne(targetEntity = Team.class, cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name="t_Id", referencedColumnName="teamId")
 	private Team team;
-
+	 
 	// meta data
 	@Version
 	private Integer updateCount;

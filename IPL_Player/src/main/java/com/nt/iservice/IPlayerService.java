@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.nt.dto.PlayerDto;
-import com.nt.dto.TeamDto;
+import com.nt.dto.PlayerReciveDto;
 
 public interface IPlayerService {
 
 	public String registerPlayer(PlayerDto player);
 
-	public PlayerDto getPlayer(Integer id);
+	public PlayerReciveDto getPlayer(Integer id);
 
 	public String deletePlayer(Integer id);
 
@@ -24,6 +24,6 @@ public interface IPlayerService {
 
 	public Map<Integer, String> getAllIdAndPlayer();
 
-	public List<PlayerDto> getAllPlayer();
+	public List<PlayerReciveDto> getAllPlayer();
 
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nt.dto.PlayerDto;
+import com.nt.dto.PlayerReciveDto;
 import com.nt.iservice.IPlayerService;
 import com.nt.utility.Constants;
 import com.nt.utility.ResponseMessage;
@@ -36,7 +36,7 @@ public class PlayerController {
 
 	@GetMapping("/getallplayer")
 	public ResponseEntity<ResponseMessage> getAllPlayerController() {
-		List<PlayerDto> allPlayer = service.getAllPlayer();
+		List<PlayerReciveDto> allPlayer = service.getAllPlayer();
 		ResponseMessage response = ResponseMessage.builder().message("All Player List ✔").status(Constants.SUCCESS)
 				.statusCode(Constants.STATUS_OK).list(allPlayer).build();
 		return ResponseEntity.ok(response);
@@ -47,8 +47,9 @@ public class PlayerController {
 
 		String registerPlayer = service.registerPlayer(dto);
 
-		ResponseMessage response = ResponseMessage.builder().message(registerPlayer).status(Constants.SAVE_SUCCESS)
-				.statusCode(Constants.STATUS_OK).object(dto).build();
+		ResponseMessage response = ResponseMessage.builder()
+				.message(registerPlayer + " Team Id : " + dto.getTeam().getTeamId()).status(Constants.SAVE_SUCCESS)
+				.statusCode(Constants.STATUS_OK).build();
 
 		return ResponseEntity.ok(response);
 
@@ -56,7 +57,7 @@ public class PlayerController {
 
 	@GetMapping("/getplayerbyid/{id}")
 	public ResponseEntity<ResponseMessage> getPlayerByIdController(@PathVariable int id) {
-		PlayerDto player = service.getPlayer(id);
+		PlayerReciveDto player = service.getPlayer(id);
 		ResponseMessage response = ResponseMessage.builder().message("Player got By Id").status(Constants.SUCCESS)
 				.statusCode(Constants.STATUS_OK).object(player).build();
 		return ResponseEntity.ok(response);
@@ -83,7 +84,7 @@ public class PlayerController {
 
 	}
 
-	@PatchMapping("/updatename/{roll}/{id}")
+	@PatchMapping("/updateroll/{roll}/{id}")
 	public ResponseEntity<ResponseMessage> updateRollController(@PathVariable String roll, @PathVariable int id) {
 
 		String updateRoll = service.updateRoll(roll, id);
@@ -111,7 +112,7 @@ public class PlayerController {
 		List<String> allPlayerName = service.getAllPlayerName();
 
 		ResponseMessage response = ResponseMessage.builder().message("All Player Name List").status(Constants.SUCCESS)
-				.statusCode(Constants.STATUS_OK).build();
+				.statusCode(Constants.STATUS_OK).list(allPlayerName).build();
 
 		return ResponseEntity.ok(response);
 	}
@@ -122,7 +123,7 @@ public class PlayerController {
 		Map<Integer, String> allIdAndPlayer = service.getAllIdAndPlayer();
 
 		ResponseMessage response = ResponseMessage.builder().message("All Id And  Name List").status(Constants.SUCCESS)
-				.statusCode(Constants.STATUS_OK).build();
+				.statusCode(Constants.STATUS_OK).map(allIdAndPlayer).build();
 
 		return ResponseEntity.ok(response);
 

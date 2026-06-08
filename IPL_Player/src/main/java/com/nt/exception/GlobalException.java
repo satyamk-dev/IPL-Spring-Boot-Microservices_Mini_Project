@@ -11,6 +11,16 @@ import com.nt.utility.ResponseMessage;
 @RestControllerAdvice
 public class GlobalException {
 
+	@ExceptionHandler(PlayerAlradyExistsException.class)
+	public ResponseEntity<ResponseMessage> playerAlradyExistsExceptionController(PlayerAlradyExistsException ex) {
+
+		ResponseMessage response = ResponseMessage.builder().message(ex.getMessage()).status(Constants.FAILED)
+				.statusCode(Constants.STATUS_BAD_REQUEST).build();
+
+		return ResponseEntity.ok(response);
+
+	}
+
 	@ExceptionHandler(PlayerNotFoundException.class)
 	public ResponseEntity<ResponseMessage> playerNotFound(PlayerNotFoundException ex) {
 		ResponseMessage responseMessage = ResponseMessage.builder().message(ex.getMessage()).status(Constants.FAILED)

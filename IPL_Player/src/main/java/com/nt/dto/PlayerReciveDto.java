@@ -1,7 +1,6 @@
 package com.nt.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.nt.entity.Team;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PlayerDto {
+public class PlayerReciveDto {
 	
 	private Integer playerId;
 	
@@ -21,6 +20,6 @@ public class PlayerDto {
 	
 	private String roll;
 	
-	private Team team;
+	private TeamDto teamDto;
 	
 }

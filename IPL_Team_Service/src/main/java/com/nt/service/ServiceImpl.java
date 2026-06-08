@@ -20,6 +20,8 @@ public class ServiceImpl implements IService {
 	@Autowired
 	private TeamRepository teamRepo;
 
+
+
 	@Override
 	public String saveTeam(TeamDto dto) {
 		Team team = new Team();
@@ -32,7 +34,8 @@ public class ServiceImpl implements IService {
 	public TeamDto getTeamById(Integer id) {
 		TeamDto teamDto = new TeamDto();
 		Team team = teamRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Input"));
-		BeanUtils.copyProperties(team, teamDto);
+		
+		BeanUtils.copyProperties(team,teamDto);
 		return teamDto;
 	}
 
@@ -46,11 +49,11 @@ public class ServiceImpl implements IService {
 
 	@Override
 	public String updateTeamName(Integer id, String name) {
-		Team team= null;
+		Team team = null;
 		try {
 			team = teamRepo.findById(id).orElseThrow(() -> new TeamNotFoundException("Invalid Input"));
 			team.setTeamName(name);
-			
+
 		} catch (TeamNotFoundException e) {
 			e.printStackTrace();
 		}
