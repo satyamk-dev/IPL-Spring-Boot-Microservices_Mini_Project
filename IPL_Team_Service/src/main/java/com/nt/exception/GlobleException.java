@@ -13,8 +13,10 @@ public class GlobleException {
 
 	@ExceptionHandler(TeamNotFoundException.class)
 	public ResponseEntity<ResponseMessage> TeamNotFoundExcpetion(TeamNotFoundException ex) {
-		ex.printStackTrace();;
-		ResponseMessage rm = ResponseMessage.builder().message(ex.getMessage()).status(Constants.FAILED).statusCode(Constants.STATUS_NOT_FOUND).build();
+		ex.printStackTrace();
+		;
+		ResponseMessage rm = ResponseMessage.builder().message(ex.getMessage()).status(Constants.FAILED)
+				.statusCode(Constants.STATUS_NOT_FOUND).build();
 
 		return new ResponseEntity<ResponseMessage>(rm, HttpStatus.BAD_REQUEST);
 
@@ -24,5 +26,13 @@ public class GlobleException {
 	public ResponseEntity<String> globleException(Exception e) {
 		e.printStackTrace();
 		return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(TeamAlreadyExistsException.class)
+	public ResponseEntity<ResponseMessage> globleTeamIsExsitedException(TeamAlreadyExistsException ex) {
+		ex.printStackTrace();
+		ResponseMessage response = ResponseMessage.builder().message("Team is Exists in DB").status(Constants.FAILED)
+				.statusCode(Constants.STATUS_BAD_REQUEST).build();
+		return ResponseEntity.ok(response);
 	}
 }

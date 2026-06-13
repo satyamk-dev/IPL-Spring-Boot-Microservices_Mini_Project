@@ -1,6 +1,6 @@
 package com.nt.exception;
 
-public class MyException extends Throwable{
+public class MyException extends RuntimeException{
 	
 	MyException(String message){
 		super(message);

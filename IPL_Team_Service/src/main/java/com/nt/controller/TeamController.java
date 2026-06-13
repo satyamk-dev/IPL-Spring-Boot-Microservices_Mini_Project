@@ -60,7 +60,6 @@ public class TeamController {
 
 	@PutMapping("/updateteam")
 	public ResponseEntity<ResponseMessage> updateFullTeamController(@RequestBody TeamDto teamDto) {
-
 		String updateTeam = service.updateTeam(teamDto);
 		ResponseMessage response = ResponseMessage.builder().message(updateTeam).status(Constants.SUCCESS)
 				.statusCode(Constants.STATUS_CREATED).object(teamDto).build();
@@ -71,36 +70,34 @@ public class TeamController {
 	@PatchMapping("/updateteamname")
 	public ResponseEntity<ResponseMessage> updateTeamNameController(@RequestParam Integer id,
 			@RequestParam String name) {
-
 		String updateTeamName = service.updateTeamName(id, name);
-
 		ResponseMessage response = ResponseMessage.builder().message(updateTeamName).status(Constants.SUCCESS)
 				.statusCode(Constants.STATUS_CREATED).build();
-
 		return new ResponseEntity<ResponseMessage>(response, HttpStatus.ACCEPTED);
-
 	}
 
 	@DeleteMapping("/deleteteam")
 	public ResponseEntity<ResponseMessage> deleteTeamByIdController(@RequestParam Integer id) {
-
 		String deleteTeam = service.deleteTeam(id);
 		ResponseMessage response = ResponseMessage.builder().message(deleteTeam).status(Constants.SUCCESS)
 				.statusCode(Constants.STATUS_OK).build();
-
 		return new ResponseEntity<ResponseMessage>(response, HttpStatus.ACCEPTED);
-
 	}
 
 	@DeleteMapping("/deleteallteam")
 	public ResponseEntity<ResponseMessage> deleteAllTeamController() {
 		String deleteAllTeam = service.deleteAllTeam();
-
 		ResponseMessage response = ResponseMessage.builder().message(deleteAllTeam).status(Constants.SUCCESS)
 				.statusCode(Constants.STATUS_OK).build();
-
 		return ResponseEntity.ok(response);
+	}
 
+	@PostMapping("/save-all")
+	public ResponseEntity<ResponseMessage> saveAllTeam(List<TeamDto> listTeamDto) {
+		String saveBulkTeam = service.saveBulkTeam(listTeamDto);
+		ResponseMessage response = ResponseMessage.builder().message(saveBulkTeam).status(Constants.SAVE_SUCCESS)
+				.statusCode(Constants.STATUS_CREATED).build();
+		return ResponseEntity.ok(response);
 	}
 
 }

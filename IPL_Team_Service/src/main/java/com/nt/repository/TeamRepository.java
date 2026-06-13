@@ -8,4 +8,6 @@ import com.nt.entity.Team;
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Integer> {
 
+	public boolean existsByTeamName(String name);
+
 }

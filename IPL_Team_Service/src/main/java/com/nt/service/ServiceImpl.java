@@ -3,6 +3,7 @@ package com.nt.service;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.nt.dto.TeamDto;
 import com.nt.entity.Team;
+import com.nt.exception.TeamAlreadyExistsException;
 import com.nt.exception.TeamNotFoundException;
 import com.nt.iservice.IService;
 import com.nt.repository.TeamRepository;
@@ -19,11 +21,14 @@ public class ServiceImpl implements IService {
 
 	@Autowired
 	private TeamRepository teamRepo;
-
-
-
+ 
 	@Override
 	public String saveTeam(TeamDto dto) {
+		
+		if(teamRepo.existsByTeamName(dto.getTeamName())) {
+			throw new TeamAlreadyExistsException("Team alrady Existed");
+		} 
+		
 		Team team = new Team();
 		BeanUtils.copyProperties(dto, team);
 		Team save = teamRepo.save(team);
@@ -85,6 +90,23 @@ public class ServiceImpl implements IService {
 	public String deleteAllTeam() {
 		teamRepo.deleteAll();
 		return "All Team Deleted! ";
+	}
+
+	@Override
+	public String saveBulkTeam(List<TeamDto> dto) {
+		ListIterator<TeamDto> listIterator = dto.listIterator();
+		
+		while(listIterator.hasNext()) {
+			Team team = new Team();
+			TeamDto next = listIterator.next();
+			if(teamRepo.existsByTeamName(next.getTeamName())) {
+				throw new TeamAlreadyExistsException("Team alrady Existed");
+			} 
+			
+			BeanUtils.copyProperties(next,team);
+			teamRepo.save(team);
+		}
+		return "Bulk Team Save Successfully! ";
 	}
 
 }

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +25,7 @@ import com.nt.repository.PlayerRepository;
 import com.nt.repository.TeamRepository;
 import com.nt.utility.ResponseMessage;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -54,7 +55,8 @@ public class PlayerService implements IPlayerService {
 	}
 
 	@Override
-	public PlayerReciveDto getPlayer(Integer id) {
+	@CircuitBreaker(name = "IPL-TEAM", fallbackMethod = "BreakedServiceCommunication")
+	public PlayerReciveDto getPlayer(int id) {
 
 		Player player = playerRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Invalid Player Id"));
@@ -135,18 +137,17 @@ public class PlayerService implements IPlayerService {
 
 	@Override
 	public List<String> getAllPlayerName() {
-		
+
 		List<String> nameList = new ArrayList<>();
-		
+
 		List<Player> all = playerRepository.findAll();
-		
+
 		Iterator<Player> ilist = all.listIterator();
-		
-		
+
 		while (ilist.hasNext()) {
-			
-		Player next = ilist.next();
-			
+
+			Player next = ilist.next();
+
 			nameList.add(next.getPlayerName());
 		}
 		return nameList;
@@ -161,15 +162,16 @@ public class PlayerService implements IPlayerService {
 		Iterator<Player> iterator = all.iterator();
 
 		while (iterator.hasNext()) {
-			
+
 			Player next = iterator.next();
-			
+
 			map.put(next.getPlayerId(), next.getPlayerName());
 		}
 		return map;
 	}
 
 	@Override
+	@CircuitBreaker(name = "IPL-TEAM", fallbackMethod = "getAllPlayerFallBack")
 	public List<PlayerReciveDto> getAllPlayer() {
 		List<PlayerReciveDto> playerDto = new ArrayList<>();
 		List<Player> all = playerRepository.findAll();
@@ -192,6 +194,47 @@ public class PlayerService implements IPlayerService {
 			playerDto.add(playerO);
 		}
 		return playerDto;
+	}
+
+	public PlayerReciveDto BreakedServiceCommunication(int id, Exception e) {
+		PlayerReciveDto dto = new PlayerReciveDto();
+		dto.setPlayerId(id);
+		dto.setPlayerName("Service Unavailable");
+		dto.setRoll("Service Unavailable");
+		dto.setAge(0);
+		dto.setTeamDto(null);
+
+		return dto;
+	}
+
+	public List<PlayerReciveDto> getAllPlayerFallBack(Exception e) {
+		PlayerReciveDto dto = new PlayerReciveDto();
+		dto.setPlayerId(0);
+		dto.setPlayerName("Service Unavailable");
+		dto.setRoll("Service Unavailable");
+		dto.setAge(0);
+		dto.setTeamDto(null);
+
+		return List.of(dto);
+	}
+
+	@Override
+	public String bulkRegisterPlayer(List<PlayerDto> listPlayerDto) {
+
+		ListIterator<PlayerDto> listIterator = listPlayerDto.listIterator();
+
+		while (listIterator.hasNext()) {
+			Player player = new Player();
+			PlayerDto next = listIterator.next();
+			if (playerRepository.existsByPlayerName(next.getPlayerName())) {
+				throw new PlayerAlradyExistsException("Player Alrady Exists "+next.getPlayerName());
+			}
+			BeanUtils.copyProperties(next, player);
+			playerRepository.save(player);
+		}
+
+		return "All Players Save Successfully!";
+
 	}
 
 }

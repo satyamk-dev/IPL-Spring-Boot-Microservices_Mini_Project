@@ -8,9 +8,11 @@ import com.nt.dto.PlayerReciveDto;
 
 public interface IPlayerService {
 
-	public String registerPlayer(PlayerDto player);
+	public String registerPlayer(PlayerDto playerDto);
+	
+	public String bulkRegisterPlayer(List<PlayerDto> listPlayerDto);	
 
-	public PlayerReciveDto getPlayer(Integer id);
+	public PlayerReciveDto getPlayer(int id);
 
 	public String deletePlayer(Integer id);
 
